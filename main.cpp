@@ -1,90 +1,30 @@
 // --
 
 #include <iostream>
-//#include <string>
+#include <string>
 
-#include <Windows.h> // Note: Must be the first one to avoid compiler errors!
-#include <Dbghelp.h>
+#include "StructuredException.h"
+
+#include "aux-raw.h"
+#include "exception-generator.h"
+#include "minidumper.h"
 
 // Code below based on
 // http://stackoverflow.com/questions/5028781/
 // c-how-to-write-a-sample-code-that-will-crash-and-produce-dump-file
 
-bool
-make_minidump(EXCEPTION_POINTERS* e)
-{
-	auto handleDbgHelp = LoadLibraryA("dbghelp");
-	if (handleDbgHelp == nullptr) {
-		std::cerr << __FUNCTION__ << ": Error: handleDbgHelp == nullptr\n";
-		return false;
-	}
-
-	auto addressMiniDumpWriteDump =
-		(decltype(&MiniDumpWriteDump))
-		GetProcAddress(handleDbgHelp, "MiniDumpWriteDump");
-	if (addressMiniDumpWriteDump == nullptr) {
-		std::cerr << __FUNCTION__
-			<< ": Error: addressMiniDumpWriteDump == nullptr\n";
-		return false;
-	}
-
-	char name[MAX_PATH];
-	{
-		auto nameEnd =
-			name + GetModuleFileNameA(GetModuleHandleA(0), name, MAX_PATH);
-		SYSTEMTIME t;
-		GetSystemTime(&t);
-		wsprintfA(nameEnd - strlen(".exe"),
-			"_%4d%02d%02d_%02d%02d%02d.dmp",
-			t.wYear, t.wMonth, t.wDay, t.wHour, t.wMinute, t.wSecond);
-	}
-
-	auto handleFile =
-		CreateFileA(
-			name,
-			GENERIC_WRITE, FILE_SHARE_READ, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL,
-			0);
-	if (handleFile == INVALID_HANDLE_VALUE) {
-		std::cerr << __FUNCTION__
-			<< ": Error: handleFile == INVALID_HANDLE_VALUE\n";
-		return false;
-	}
-
-	MINIDUMP_EXCEPTION_INFORMATION exceptionInfo;
-	exceptionInfo.ThreadId = GetCurrentThreadId();
-	exceptionInfo.ExceptionPointers = e;
-	exceptionInfo.ClientPointers = FALSE;
-
-	auto dumped =
-		addressMiniDumpWriteDump(
-			GetCurrentProcess(),
-			GetCurrentProcessId(),
-			handleFile,
-			MINIDUMP_TYPE(MiniDumpWithIndirectlyReferencedMemory|MiniDumpScanMemory),
-			e ? &exceptionInfo : nullptr,
-			nullptr,
-			nullptr);
-
-	CloseHandle(handleFile);
-
-	const bool succeeded = dumped == TRUE;
-
-	if (succeeded)
-		std::cout << __FUNCTION__ << ": succeeded" << std::endl;
-	else
-		std::cerr << __FUNCTION__ << ": Failed\n";
-
-	return succeeded;
-}
+void
+SETranslator(UINT a_codeSE, _EXCEPTION_POINTERS* a_excPointers)
+{	throw new dump::StructuredException(a_codeSE, a_excPointers); }
 
 LONG CALLBACK
-unhandled_handler(EXCEPTION_POINTERS* e)
+UnhandledHandler(EXCEPTION_POINTERS* e)
 {
-	const bool succeeded = make_minidump(e);
+	const bool succeeded = dump::MakeMinidump(e);
 	if (succeeded)
-		std::cout << __FUNCTION__ << ": make_minidump succeeded" << std::endl;
+		std::cout << __func__ << ": dump::MakeMinidump succeeded" << std::endl;
 	else
-		std::cerr << __FUNCTION__ << ": Error: make_minidump failed\n";
+		std::cerr << __func__ << ": Error: dump::MakeMinidump failed\n";
 	return EXCEPTION_CONTINUE_SEARCH;
 }
 
@@ -93,9 +33,29 @@ main(int /*argc*/, char* /*argv*/[])
 {
 	std::cout << "Hello, dump!" << std::endl;
 
-	SetUnhandledExceptionFilter(unhandled_handler);
+#ifdef EHA
+	_set_se_translator(SETranslator);
+#endif
+	SetUnhandledExceptionFilter(UnhandledHandler);
 
-	std::cout << "Strange value: " << *(int*)0 << std::endl;
+	//using dump::StructuredException;
+
+	try {
+		dump::GenerateException();
+	} catch (dump::StructuredException* e) {
+		std::string description;
+		e->GetErrorMessage(description);
+		e->Delete();
+		std::cerr << __func__
+			<< ": Caught a dump::StructuredException in main\n" << description
+			<< '\n';
+	} catch (const std::exception& e) {
+		std::cerr << __func__
+			<< ": Caught a std::exception in main\n" << e.what() << '\n';
+	} catch (...) { // catch block will only be executed under /EHa
+		std::cerr << __func__
+			<< ": Caught a ... exception in main\n";
+	}
 
 	std::cout << "Bye, dump!" << std::endl;
 	return EXIT_SUCCESS;

@@ -24,7 +24,11 @@ else ()
 endif ()
 
 set(SRC_LIST
+	aux-raw.h
+	exception-generator.cpp exception-generator.h
 	main.cpp
+	minidumper.cpp minidumper.h
+	StructuredException.cpp StructuredException.h
 )
 
 add_executable(${PROJECT_NAME} ${SRC_LIST})
@@ -37,7 +41,7 @@ if("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
 		message(STATUS "Entering Windows/MSVC branch.")
 		string(CONCAT CMAKE_CXX_FLAGS
 			"${CMAKE_CXX_FLAGS} -D_SCL_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS "
-			"/W4 /WX /EHa /wd4351")
+			"/W4 /EHsc /wd4351") # Add /W4 /WX /EHsc
 		# '- http://msdn.microsoft.com/en-US/library/thxezb7y.aspx:
 		#		  /wd n  Disables the compiler warning that is specified in n.
 		#			For example, /wd4326 disables compiler warning C4351.
@@ -50,13 +54,13 @@ if("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
 elseif("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
 	if(CMAKE_COMPILER_IS_GNUCXX)
 		message(STATUS "Entering Linux/CMAKE_COMPILER_IS_GNUCXX branch.")
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11")
+		message(ERROR "Uncontemplated case.")
 	else()
 		message(STATUS "Entering Linux/else branch. We assume clang++.")
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11")
+		message(ERROR "Uncontemplated case.")
 	endif()
 elseif("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
-	message(STATUS "Entering Darwin branch. We assume clang++.")
+	message(ERROR "Uncontemplated case.")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11")
 else()
 	message(FATAL_ERROR "Unknown system")
