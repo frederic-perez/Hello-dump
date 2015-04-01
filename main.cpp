@@ -7,23 +7,24 @@
 #include <Dbghelp.h>
 
 // Code below based on
-// http://stackoverflow.com/questions/5028781/c-how-to-write-a-sample-code-that-will-crash-and-produce-dump-file
+// http://stackoverflow.com/questions/5028781/
+// c-how-to-write-a-sample-code-that-will-crash-and-produce-dump-file
 
 bool
 make_minidump(EXCEPTION_POINTERS* e)
 {
-	auto hDbgHelp = LoadLibraryA("dbghelp");
-	if (hDbgHelp == nullptr) {
-		std::cerr << __FUNCTION__ << ": Error: hDbgHelp == nullptr\n";
+	auto handleDbgHelp = LoadLibraryA("dbghelp");
+	if (handleDbgHelp == nullptr) {
+		std::cerr << __FUNCTION__ << ": Error: handleDbgHelp == nullptr\n";
 		return false;
 	}
 
-	auto pMiniDumpWriteDump =
+	auto addressMiniDumpWriteDump =
 		(decltype(&MiniDumpWriteDump))
-		GetProcAddress(hDbgHelp, "MiniDumpWriteDump");
-	if (pMiniDumpWriteDump == nullptr) {
+		GetProcAddress(handleDbgHelp, "MiniDumpWriteDump");
+	if (addressMiniDumpWriteDump == nullptr) {
 		std::cerr << __FUNCTION__
-			<< ": Error: hDbgHelppMiniDumpWriteDump == nullptr\n";
+			<< ": Error: addressMiniDumpWriteDump == nullptr\n";
 		return false;
 	}
 
@@ -38,13 +39,14 @@ make_minidump(EXCEPTION_POINTERS* e)
 			t.wYear, t.wMonth, t.wDay, t.wHour, t.wMinute, t.wSecond);
 	}
 
-	auto hFile =
+	auto handleFile =
 		CreateFileA(
 			name,
 			GENERIC_WRITE, FILE_SHARE_READ, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL,
 			0);
-	if (hFile == INVALID_HANDLE_VALUE) {
-		std::cerr << __FUNCTION__ << ": Error: hFile == INVALID_HANDLE_VALUE\n";
+	if (handleFile == INVALID_HANDLE_VALUE) {
+		std::cerr << __FUNCTION__
+			<< ": Error: handleFile == INVALID_HANDLE_VALUE\n";
 		return false;
 	}
 
@@ -54,16 +56,16 @@ make_minidump(EXCEPTION_POINTERS* e)
 	exceptionInfo.ClientPointers = FALSE;
 
 	auto dumped =
-		pMiniDumpWriteDump(
+		addressMiniDumpWriteDump(
 			GetCurrentProcess(),
 			GetCurrentProcessId(),
-			hFile,
+			handleFile,
 			MINIDUMP_TYPE(MiniDumpWithIndirectlyReferencedMemory|MiniDumpScanMemory),
 			e ? &exceptionInfo : nullptr,
 			nullptr,
 			nullptr);
 
-	CloseHandle(hFile);
+	CloseHandle(handleFile);
 
 	const bool succeeded = dumped == TRUE;
 
