@@ -4,25 +4,6 @@ cmake_minimum_required(VERSION 2.8)
 
 project(Hello-dump)
 
-# Boost stuff
-if(WIN32)
-	set(Boost_USE_STATIC_LIBS ON)
-else()
-	set(Boost_USE_STATIC_LIBS OFF)
-endif()
-set(Boost_USE_MULTITHREADED ON)
-# find_package(Boost) # <-- Use this simple line for using only headers
-find_package(Boost COMPONENTS system filesystem)
-if (Boost_FOUND)
-	message(STATUS "Boost found:")
-	include_directories(${Boost_INCLUDE_DIRS})
-	message(STATUS "  Boost_INCLUDE_DIRS: ${Boost_INCLUDE_DIRS}")
-	message(STATUS "  Boost_LIBRARIES: ${Boost_LIBRARIES}
-	Note: Boost_LIBRARIES can be empty if no COMPONENTS are used.") # Used below
-else ()
-	message(FATAL_ERROR "Boost not found - Hint(?): ENV{BOOST_ROOT} is $ENV{BOOST_ROOT}")
-endif ()
-
 set(SRC_LIST
 	aux-raw.h
 	exception-generator.cpp exception-generator.h
