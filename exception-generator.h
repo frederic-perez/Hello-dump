@@ -6,31 +6,32 @@
 
 namespace dump {
 
-class ExceptionFunc {
+class DangerousFunction {
 public:
 	typedef void (*FuncDef)();
 
-	ExceptionFunc(const char* sName, FuncDef func)
-		: m_sName(sName), m_func(func) {}
+	DangerousFunction(const char* sName, FuncDef func)
+	: m_sName(sName), m_func(func)
+	{}
 
 	const std::string& GetName() const { return m_sName; }
-	void operator()() const {return m_func();}
+	void operator()() const {	return m_func(); }
 
 private:
 	std::string m_sName;
 	FuncDef m_func;
 };
 
-class Exceptions {
+class DangerousFunctions { // ie. a container of DangerousFunction objects
 public:
-	typedef std::vector<ExceptionFunc> ExcCont;
-	typedef ExcCont::const_iterator ExcIT;
+	typedef std::vector<DangerousFunction> ContainerOfDangerousFunctions;
+	typedef ContainerOfDangerousFunctions::const_iterator ExcIT;
 
-	Exceptions();
-	const ExcCont m_functions;
+	DangerousFunctions();
+	const ContainerOfDangerousFunctions m_functions;
 
 private:
-	Exceptions& operator=(const Exceptions&); // Disable
+	DangerousFunctions& operator=(const DangerousFunctions&); // Disable
 };
 
 } // namespace dump

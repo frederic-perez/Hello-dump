@@ -30,54 +30,65 @@ UnhandledHandler(EXCEPTION_POINTERS* e)
 }
 
 namespace {
-void RunException(const dump::ExceptionFunc& func) {
-	std::cout << "Run " << func.GetName() << std::endl;
+
+void
+RunException(const dump::DangerousFunction& func)
+{
+	std::cout << "Going to execute dangerous function " << func.GetName()
+		<< std::endl;
 	func();
 }
 
-DWORD WINAPI ExceptionThread(LPVOID lpParameter) {
-	const dump::ExceptionFunc* const pFunc =
-		static_cast<dump::ExceptionFunc*>(lpParameter);
+DWORD WINAPI
+ExceptionThread(LPVOID lpParameter)
+{
+	const dump::DangerousFunction* const pFunc =
+		static_cast<dump::DangerousFunction*>(lpParameter);
 
 	RunException(*pFunc);
 
 	return 0;
 }
 
-void RunExceptionOnThread(const dump::ExceptionFunc& func) {
-
+void
+RunExceptionOnThread(const dump::DangerousFunction& func) 
+{
 	std::cout << "Wait for thread..." << std::endl;
 
-	const HANDLE hThread = CreateThread(NULL, 0, ExceptionThread,
-		static_cast<LPVOID>(const_cast<dump::ExceptionFunc*>(&func)),
-		0, NULL);
+	const HANDLE hThread =
+		CreateThread(
+			NULL, 0, ExceptionThread,
+			static_cast<LPVOID>(const_cast<dump::DangerousFunction*>(&func)),
+			0, NULL);
+
 	// Do not access same objects than the thread (func, cout,...)
 	WaitForSingleObject(hThread, INFINITE);
 
 	CloseHandle(hThread);
 }
 
-const dump::ExceptionFunc&
-AskForException(const dump::Exceptions& exceptions ) {
+const dump::DangerousFunction&
+AskForDangerousFunction(const dump::DangerousFunctions& exceptions)
+{
 	std::cout << "Choose a exception:" << std::endl;
 	
-	for( size_t n = 0; n < exceptions.m_functions.size(); ++n)
-	{
-		std::cout << "\t[" << n << "] -> " <<
-			exceptions.m_functions[n].GetName() << std::endl;
-	}
+	for (size_t i=0; i < exceptions.m_functions.size(); ++i)
+		std::cout << "\t[" << i << "] -> " <<
+			exceptions.m_functions[i].GetName() << std::endl;
 
-	size_t n;
-	do {
+	size_t i;
+	do { // Loop to account for silly users
 		std::string line;
 		std::getline(std::cin, line);
-		std::stringstream(line) >> n;
-	} while (n >= exceptions.m_functions.size());
+		std::stringstream(line) >> i;
+	} while (i >= exceptions.m_functions.size());
 
-	return exceptions.m_functions[n];
+	return exceptions.m_functions[i];
 }
 
-bool AskForRunOnThread() {
+bool
+AskForRunOnThread()
+{
 	std::cout << "Run on worker thread?: [y/n]" << std::endl;
 
 	char thread;
@@ -91,9 +102,9 @@ bool AskForRunOnThread() {
 int
 main(int /*argc*/, char* /*argv*/[])
 {
-	dump::Exceptions exceptions;
+	const dump::DangerousFunctions functions;
 	
-	const dump::ExceptionFunc& func = AskForException(exceptions);
+	const dump::DangerousFunction& func = AskForDangerousFunction(functions);
 
 	if (AskForRunOnThread())
 		RunExceptionOnThread(func);

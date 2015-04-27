@@ -13,7 +13,7 @@
 // c-how-to-write-a-sample-code-that-will-crash-and-produce-dump-file
 
 bool
-dump::MakeMinidump(EXCEPTION_POINTERS* e)
+dump::MakeMinidump(EXCEPTION_POINTERS* /*e*/)
 {
 	return false;
 	//HMODULE handleDbgHelp = LoadLibraryA("dbghelp");
