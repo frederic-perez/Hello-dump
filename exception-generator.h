@@ -25,7 +25,7 @@ private:
 class DangerousFunctions { // ie. a container of DangerousFunction objects
 public:
 	typedef std::vector<DangerousFunction> ContainerOfDangerousFunctions;
-	typedef ContainerOfDangerousFunctions::const_iterator ExcIT;
+	typedef ContainerOfDangerousFunctions::const_iterator FunctionIT;
 
 	DangerousFunctions();
 	const ContainerOfDangerousFunctions m_functions;

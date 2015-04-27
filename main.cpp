@@ -67,6 +67,15 @@ RunExceptionOnThread(const dump::DangerousFunction& func)
 	CloseHandle(hThread);
 }
 
+void
+RunException(bool runOnThread, const dump::DangerousFunction& func)
+{
+	if (runOnThread)
+		RunExceptionOnThread(func);
+	else
+		RunException(func);
+}
+
 const dump::DangerousFunction&
 AskForDangerousFunction(const dump::DangerousFunctions& exceptions)
 {
@@ -97,21 +106,87 @@ AskForRunOnThread()
 	return thread == 'y';
 }
 
+void InvalidArguments()
+{
+	std::cout << "Invalid arguments" << std::endl;
+}
+
+class ArgsReader
+{
+public:
+	enum State {eAsk, eAllCrashes, eSpecificCrash, eInvalidArgs};
+
+	ArgsReader(int argc, char* argv[])
+	:	m_state(eAsk),
+		m_dangerousFunctionID(0),
+		m_runOnThread(false)
+	{
+		for (int i=1; i<argc; ++i)
+		{
+			const std::string allFlag = "/all";
+			const std::string crashNumFlag = "/c";
+			const std::string threadFlag = "/t";
+
+			if (std::string(argv[i]) == allFlag)
+				m_state = eAllCrashes;
+			else if (std::string(argv[i],crashNumFlag.size()) == crashNumFlag)
+			{
+				std::stringstream(std::string(argv[i]+crashNumFlag.size()))
+					>> m_dangerousFunctionID;
+				m_state = eSpecificCrash;
+			}
+			else if (std::string(argv[i]) == threadFlag)
+				m_runOnThread = true;
+		}
+	}
+
+	State m_state;
+	size_t m_dangerousFunctionID;
+	bool m_runOnThread;
+};
+
 } // namespace
 
 int
-main(int /*argc*/, char* /*argv*/[])
+main(int argc, char* argv[])
 {
+	const ArgsReader args(argc, argv);
 	const dump::DangerousFunctions functions;
-	
-	const dump::DangerousFunction& func = AskForDangerousFunction(functions);
+	switch(args.m_state)
+	{
+	case ArgsReader::eAsk:
+		RunException(AskForRunOnThread(),
+			AskForDangerousFunction(functions));
 
-	if (AskForRunOnThread())
-		RunExceptionOnThread(func);
-	else
-		RunException(func);
+		std::cout << "Success" << std::endl;
+		break;
 
-	std::cout << "Success" << std::endl;
+	case ArgsReader::eAllCrashes:
+		typedef dump::DangerousFunctions::FunctionIT IT;
+		for (IT it = functions.m_functions.begin();
+			it != functions.m_functions.end(); ++it)
+			RunException(args.m_runOnThread, *it);
+
+		std::cout << "Success" << std::endl;
+		break;
+
+	case ArgsReader::eSpecificCrash:
+		if (args.m_dangerousFunctionID < functions.m_functions.size())
+		{
+			RunException(args.m_runOnThread,
+				functions.m_functions[args.m_dangerousFunctionID]);
+			std::cout << "Success" << std::endl;
+		}
+		else
+			InvalidArguments();
+		break;
+
+
+	default:
+		InvalidArguments();
+		break;
+	}
+
 //#ifdef EHA
 //	_set_se_translator(SETranslator);
 //#endif
