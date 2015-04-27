@@ -75,13 +75,9 @@ SetErrorDescription(
 		break;
 
 bool
-dump::StructuredException::GetErrorMessage(
-	std::string& a_description, unsigned int* pnHelpContext) const
+dump::StructuredException::GetErrorMessage(std::string& a_description) const
 {
 	bool succeeded = true;
-
-	if (pnHelpContext != nullptr)
-		*pnHelpContext = 0;
 
 	switch (m_nSeCode) {
 		CASE(ACCESS_VIOLATION, a_description);

@@ -20,8 +20,7 @@ public:
 	int ReportError(unsigned int nType, unsigned int nIDHelp) const;
 
 	bool
-	GetErrorMessage(
-		std::string& a_description, unsigned int* pnHelpContext = nullptr) const;
+	GetErrorMessage(std::string& a_description) const;
 
 private:
 	unsigned int m_nSeCode;

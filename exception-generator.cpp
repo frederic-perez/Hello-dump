@@ -7,89 +7,78 @@
 
 namespace {
 
-void
-fail()
-{ // generates SE and attempts to catch it using catch(...)
-	// Copied and slightly edited from
-	// https://msdn.microsoft.com/en-us/library/swezty51.aspx
-	try {
-		int i = 20, j = 1;
-		for (; i > 0;)
-			if (i > 0)
-				--i;
-		j /= i;	// This will throw a SE (divide by zero).
-		std::cout << __func__ << ": j = " << j << std::endl;
-	} catch (...) { // catch block will only be executed under /EHa
-		std::cerr << __func__ << ": Caught an exception in catch (...)\n";
-	}
+template <typename T>
+void ZeroDiv()
+{
+	T zero = 0;
+	T zeroDiv = 666/zero;
+	zeroDiv += 1;
 }
 
+void IntZeroDiv() {
+	ZeroDiv<int>();
+}
+
+void FloatZeroDiv() {
+	ZeroDiv<float>();
+}
+
+void NullPtrDereference() {
+	int* p = 0;
+	*p = 666;
+}
+
+void DeletedPtrDereference() {
+	int* p = new int(666);
+	delete p;
+	*p = 666;
+}
+
+void OutOfBoundsStdVectorIndexing() {
+   std::vector<int> v;
+   v[0] = 666;
+}
+
+void OutOfBoundsArrayIndexing() {
+	int v[10] = {0};
+	v[10] = 666;
+}
+
+void OutOfBoundsDynamicArrayIndexing() {
+	int* const v = new int[10];
+	v[10] = 666;
+	delete [] v;
+}
+
+void CppThrowInt() {
+   throw 666;
+}
+
+#define EXCEPTION_FUNC(f) dump::ExceptionFunc(#f, f)
+
+template <typename T, size_t N>
+size_t ArraySize( const T(&)[N] ) {return N;}
+
+std::vector<dump::ExceptionFunc> GetFunctionSet() {
+	static const dump::ExceptionFunc functions[] = {
+		EXCEPTION_FUNC(IntZeroDiv),
+		EXCEPTION_FUNC(FloatZeroDiv),
+		EXCEPTION_FUNC(NullPtrDereference),
+		EXCEPTION_FUNC(DeletedPtrDereference),
+		EXCEPTION_FUNC(OutOfBoundsStdVectorIndexing),
+		EXCEPTION_FUNC(OutOfBoundsArrayIndexing),
+		EXCEPTION_FUNC(OutOfBoundsDynamicArrayIndexing),
+		EXCEPTION_FUNC(CppThrowInt)
+	};
+
+	return std::vector<dump::ExceptionFunc>(&functions[0],
+		&functions[ArraySize(functions)]);
+}
 } // namespace
 
-void
-dump::GenerateException()
+dump::Exceptions::Exceptions()
+: m_functions(GetFunctionSet())
 {
-	std::cout << __func__ << ": Strange value: " << *(int*)0 << std::endl;
-/*
-#undef FCPX_TRY_FAIL_20150330
-#ifdef FCPX_TRY_FAIL_20150330
-	__try {
-		fail();
-	}
-	// __except will only catch an exception here...
-	__except (EXCEPTION_EXECUTE_HANDLER) {
-		// ...if the exception was not caught by the catch(...) inside fail()
-		std::cerr << __func__
-			<< ": An exception was caught in __except\n";
-	}
-#endif // FCPX_TRY_FAIL_20150330
-
-	enum { eBadAlloc, eDivByZero, eBadPointerAccess, eThrowMessage };
-
-	switch (eThrowMessage) {
-	case eBadAlloc:
-		throw std::bad_alloc();
-	case eDivByZero:
-		// A3dGlobals::SetA3dThreadUnhandledExceptionHandler FAILS, even when
-		// setting FloatingPointExceptions to true.
-	{
-		int i = 0, j = 1;
-		std::cout << __func__ << ": 1/0 is about to be computed" << std::endl;
-		//#ifndef FCPX_TRY_FAIL_20150330
-		//			try {
-		//#endif
-		j /= i;	// This will throw a SE (divide by zero).
-		std::cout << __func__ << ": oneDividedByZero = " << j << std::endl;
-		//#ifndef FCPX_TRY_FAIL_20150330
-		//			} catch (...) {
-		//				std::cerr << __func__ << ": 1/0 exception caught" << std::endl;
-		//			}
-		//#endif
-	}
-	break;
-	case eBadPointerAccess:
-		// A3dGlobals::SetA3dThreadUnhandledExceptionHandler FAILS
-	{
-		int* pointer = new int(666);
-		delete pointer;
-		pointer = 0;
-		std::cout << __func__
-			<< ": I am about to dereference a null pointer" << std::endl;
-		*pointer = 42;
-	}
-	break;
-	case eThrowMessage:
-		// A3dGlobals::SetA3dThreadUnhandledExceptionHandler succeeds
-	{
-		const char* message = "Bye, cruel world";
-		std::cout << __func__
-			<< ": I am about to throw \"" << message << "\"" << std::endl;
-		throw message;
-	}
-	default:
-		throw 666;
-	}
-	*/
 }
 
 // -- eof
