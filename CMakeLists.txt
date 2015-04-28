@@ -15,8 +15,8 @@ set(SRC_LIST
 add_executable(${PROJECT_NAME} ${SRC_LIST})
 
 enable_testing()
-add_test( AllCrashes ${PROJECT_NAME} /all )
-add_test( AllCrashesOnThread ${PROJECT_NAME} /all /t )
+add_test(ExecuteAllDangerousFunctions ${PROJECT_NAME} /all)
+add_test(ExecuteAllDangerousFunctionsInThread ${PROJECT_NAME} /all /t)
 
 message(STATUS "CMAKE_C_PLATFORM_ID is ${CMAKE_C_PLATFORM_ID}")
 message(STATUS "CMAKE_SYSTEM_NAME is ${CMAKE_SYSTEM_NAME}")

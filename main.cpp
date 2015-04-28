@@ -32,58 +32,59 @@ UnhandledHandler(EXCEPTION_POINTERS* e)
 namespace {
 
 void
-RunException(const dump::DangerousFunction& func)
+Execute(const dump::DangerousFunction& a_function)
 {
-	std::cout << "Going to execute dangerous function " << func.GetName()
+	std::cout << "Going to execute dangerous function " << a_function.GetName()
 		<< std::endl;
-	func();
+	a_function();
 }
 
 DWORD WINAPI
-ExceptionThread(LPVOID lpParameter)
+DangerousFunctionThread(LPVOID lpParameter)
 {
-	const dump::DangerousFunction* const pFunc =
+	const dump::DangerousFunction* const dangerousFunction =
 		static_cast<dump::DangerousFunction*>(lpParameter);
 
-	RunException(*pFunc);
+	Execute(*dangerousFunction);
 
 	return 0;
 }
 
 void
-RunExceptionOnThread(const dump::DangerousFunction& func) 
+ExecuteWithinThread(const dump::DangerousFunction& a_function)
 {
-	std::cout << "Wait for thread..." << std::endl;
+	std::cout << "Going to execute dangerous function " << a_function.GetName()
+		<< " within a thread" << std::endl;
 
 	const HANDLE hThread =
 		CreateThread(
-			NULL, 0, ExceptionThread,
-			static_cast<LPVOID>(const_cast<dump::DangerousFunction*>(&func)),
+			NULL, 0, DangerousFunctionThread,
+			static_cast<LPVOID>(const_cast<dump::DangerousFunction*>(&a_function)),
 			0, NULL);
 
-	// Do not access same objects than the thread (func, cout,...)
+	// Do not access same objects than the thread (a_function, cout,...)
 	WaitForSingleObject(hThread, INFINITE);
 
 	CloseHandle(hThread);
 }
 
 void
-RunException(bool runOnThread, const dump::DangerousFunction& func)
+Execute(bool a_runInThread, const dump::DangerousFunction& a_function)
 {
-	if (runOnThread)
-		RunExceptionOnThread(func);
+	if (a_runInThread)
+		ExecuteWithinThread(a_function);
 	else
-		RunException(func);
+		Execute(a_function);
 }
 
 const dump::DangerousFunction&
 AskForDangerousFunction(const dump::DangerousFunctions& exceptions)
 {
-	std::cout << "Choose a exception:" << std::endl;
+	std::cout << "Select a dangerous function:" << std::endl;
 	
 	for (size_t i=0; i < exceptions.m_functions.size(); ++i)
-		std::cout << "\t[" << i << "] -> " <<
-			exceptions.m_functions[i].GetName() << std::endl;
+		std::cout << "\t[" << i << "] -> " 
+			<< exceptions.m_functions[i].GetName() << std::endl;
 
 	size_t i;
 	do { // Loop to account for silly users
@@ -96,9 +97,9 @@ AskForDangerousFunction(const dump::DangerousFunctions& exceptions)
 }
 
 bool
-AskForRunOnThread()
+AskForRunInThread()
 {
-	std::cout << "Run on worker thread?: [y/n]" << std::endl;
+	std::cout << "Run on worker thread [y/n]? " << std::flush;
 
 	char thread;
 	std::cin >> thread;
@@ -114,28 +115,25 @@ void InvalidArguments()
 class ArgsReader
 {
 public:
-	enum State {eAsk, eAllCrashes, eSpecificCrash, eInvalidArgs};
+	enum State {eAsk, eAllFunctions, eSpecificFunction, eInvalidArgs};
 
 	ArgsReader(int argc, char* argv[])
 	:	m_state(eAsk),
 		m_dangerousFunctionID(0),
 		m_runOnThread(false)
 	{
-		for (int i=1; i<argc; ++i)
-		{
-			const std::string allFlag = "/all";
-			const std::string crashNumFlag = "/c";
-			const std::string threadFlag = "/t";
+		const std::string allFlag = "/all";
+		const std::string crashNumFlag = "/c";
+		const std::string threadFlag = "/t";
 
+		for (int i=1; i<argc; ++i) {
 			if (std::string(argv[i]) == allFlag)
-				m_state = eAllCrashes;
-			else if (std::string(argv[i],crashNumFlag.size()) == crashNumFlag)
-			{
+				m_state = eAllFunctions;
+			else if (std::string(argv[i],crashNumFlag.size()) == crashNumFlag) {
 				std::stringstream(std::string(argv[i]+crashNumFlag.size()))
 					>> m_dangerousFunctionID;
-				m_state = eSpecificCrash;
-			}
-			else if (std::string(argv[i]) == threadFlag)
+				m_state = eSpecificFunction;
+			}	else if (std::string(argv[i]) == threadFlag)
 				m_runOnThread = true;
 		}
 	}
@@ -152,35 +150,33 @@ main(int argc, char* argv[])
 {
 	const ArgsReader args(argc, argv);
 	const dump::DangerousFunctions functions;
-	switch(args.m_state)
-	{
+	switch (args.m_state) {
 	case ArgsReader::eAsk:
-		RunException(AskForRunOnThread(),
-			AskForDangerousFunction(functions));
-
-		std::cout << "Success" << std::endl;
+		{
+			const bool runInThread = AskForRunInThread();
+			for (;;) {
+				Execute(runInThread, AskForDangerousFunction(functions));
+				std::cout << "Succeeded" << std::endl;
+			}
+		}
 		break;
 
-	case ArgsReader::eAllCrashes:
+	case ArgsReader::eAllFunctions:
 		typedef dump::DangerousFunctions::FunctionIT IT;
 		for (IT it = functions.m_functions.begin();
-			it != functions.m_functions.end(); ++it)
-			RunException(args.m_runOnThread, *it);
-
-		std::cout << "Success" << std::endl;
+				it != functions.m_functions.end(); ++it)
+			Execute(args.m_runOnThread, *it);
+		std::cout << "Succeeded" << std::endl;
 		break;
 
-	case ArgsReader::eSpecificCrash:
-		if (args.m_dangerousFunctionID < functions.m_functions.size())
-		{
-			RunException(args.m_runOnThread,
-				functions.m_functions[args.m_dangerousFunctionID]);
-			std::cout << "Success" << std::endl;
-		}
-		else
+	case ArgsReader::eSpecificFunction:
+		if (args.m_dangerousFunctionID < functions.m_functions.size()) {
+			Execute(
+				args.m_runOnThread, functions.m_functions[args.m_dangerousFunctionID]);
+			std::cout << "Succeeded" << std::endl;
+		}	else
 			InvalidArguments();
 		break;
-
 
 	default:
 		InvalidArguments();

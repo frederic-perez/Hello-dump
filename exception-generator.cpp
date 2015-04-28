@@ -19,7 +19,6 @@ OutputValue(
 	std::cout << a_value << std::endl;
 }
 
-
 #define OUTPUT_VALUE(value) \
 	OutputValue(__FUNCTION__, #value, value)
 
@@ -132,6 +131,7 @@ GetTheVector()
 
 	return theVector;
 }
+
 } // namespace
 
 dump::DangerousFunctions::DangerousFunctions()
