@@ -90,7 +90,7 @@ AskForDangerousFunction(const dump::DangerousFunctions& exceptions)
 	do { // Loop to account for silly users
 		std::string line;
 		std::getline(std::cin, line);
-		std::stringstream(line) >> i;
+		std::istringstream(line) >> i;
 	} while (i >= exceptions.m_functions.size());
 
 	return exceptions.m_functions[i];
@@ -129,8 +129,8 @@ public:
 		for (int i=1; i<argc; ++i) {
 			if (std::string(argv[i]) == allFlag)
 				m_state = eAllFunctions;
-			else if (std::string(argv[i],crashNumFlag.size()) == crashNumFlag) {
-				std::stringstream(std::string(argv[i]+crashNumFlag.size()))
+			else if (std::string(argv[i], crashNumFlag.size()) == crashNumFlag) {
+				std::istringstream(std::string(argv[i]+crashNumFlag.size()))
 					>> m_dangerousFunctionID;
 				m_state = eSpecificFunction;
 			}	else if (std::string(argv[i]) == threadFlag)
