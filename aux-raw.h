@@ -15,4 +15,13 @@
 #define __func__ __FUNCTION__
 #endif
 
+namespace aux {
+
+template <typename T, size_t N>
+size_t
+ArraySize(const T(&)[N])
+{	return N; }
+
+} // namespace aux
+
 // -- eof

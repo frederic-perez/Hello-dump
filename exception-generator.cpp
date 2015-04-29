@@ -105,9 +105,6 @@ CppThrow666()
 
 #define DANGEROUS_FUNCTION(f) dump::DangerousFunction(#f, f)
 
-template <typename T, size_t N>
-size_t ArraySize( const T(&)[N] ) {return N;}
-
 const std::vector<dump::DangerousFunction>&
 GetTheVector()
 {
@@ -127,7 +124,7 @@ GetTheVector()
 	
 	static
 	const std::vector<dump::DangerousFunction> theVector(
-		&functions[0], &functions[ArraySize(functions)]);
+		&functions[0], &functions[aux::ArraySize(functions)]);
 
 	return theVector;
 }
