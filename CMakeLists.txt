@@ -15,8 +15,25 @@ set(SRC_LIST
 add_executable(${PROJECT_NAME} ${SRC_LIST})
 
 enable_testing()
-add_test(ExecuteAllDangerousFunctions ${PROJECT_NAME} /all)
-add_test(ExecuteAllDangerousFunctionsInThread ${PROJECT_NAME} /all /t)
+set(i 0)
+foreach(func
+	IntZeroDiv
+	FloatZeroDiv
+	DoubleZeroDiv
+	InvalidFloatToIntCast
+	NullPtrAccess
+	DeletedPtrAccess
+	OutOfBoundsStdVectorIndexing
+	OutOfBoundsOfOldCArrayIndexing
+	OutOfBoundsDynamicOldCArrayIndexing
+	InvalidIteratorAccess
+	CppThrow666
+	CppThrowStdException)
+	
+	add_test(Execute${func} ${PROJECT_NAME} /c${i})
+	add_test(Execute${func}_t ${PROJECT_NAME} /c${i} /t)
+	math(EXPR i "${i} + 1")
+endforeach(func)
 
 message(STATUS "CMAKE_C_PLATFORM_ID is ${CMAKE_C_PLATFORM_ID}")
 message(STATUS "CMAKE_SYSTEM_NAME is ${CMAKE_SYSTEM_NAME}")
