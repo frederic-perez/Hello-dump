@@ -14,19 +14,33 @@
 // http://stackoverflow.com/questions/5028781/
 // c-how-to-write-a-sample-code-that-will-crash-and-produce-dump-file
 
-void
-SETranslator(UINT a_codeSE, _EXCEPTION_POINTERS* a_excPointers)
-{	throw new dump::StructuredException(a_codeSE, a_excPointers); }
-
 LONG CALLBACK
 UnhandledHandler(EXCEPTION_POINTERS* e)
 {
+	std::cout << __func__ << ": Exception catched ("
+	<< std::hex << e->ExceptionRecord->ExceptionCode << ')' << std::endl;
+	exit(EXIT_SUCCESS);
+	//return EXCEPTION_EXECUTE_HANDLER;
+
+#undef TODO_MAKE_MINI_DUMP
+#ifdef TODO_MAKE_MINI_DUMP
 	const bool succeeded = dump::MakeMinidump(e);
 	if (succeeded)
 		std::cout << __func__ << ": dump::MakeMinidump succeeded" << std::endl;
 	else
 		std::cerr << __func__ << ": Error: dump::MakeMinidump failed\n";
 	return EXCEPTION_CONTINUE_SEARCH;
+#endif
+}
+
+void InvalidParameterHandler (
+   const wchar_t * /*expression*/,
+   const wchar_t * /*function*/, 
+   const wchar_t * /*file*/, 
+   unsigned int /*line*/,
+   uintptr_t /*pReserved*/
+){
+	std::wcout << __func__ << ": CRT catched." << std::endl;
 }
 
 namespace {
@@ -115,7 +129,7 @@ void InvalidArguments()
 class ArgsReader
 {
 public:
-	enum State {eAsk, eAllFunctions, eSpecificFunction, eInvalidArgs};
+	enum State {eAsk, eAllFunctions, eCatchableFunctions, eSpecificFunction, eInvalidArgs};
 
 	ArgsReader(int argc, char* argv[])
 	:	m_state(eAsk),
@@ -123,12 +137,15 @@ public:
 		m_runOnThread(false)
 	{
 		const std::string allFlag = "/all";
+		const std::string allCatchableFlag = "/catchable";
 		const std::string crashNumFlag = "/c";
 		const std::string threadFlag = "/t";
 
 		for (int i=1; i<argc; ++i) {
 			if (std::string(argv[i]) == allFlag)
 				m_state = eAllFunctions;
+			else if (std::string(argv[i]) == allFlag)
+				m_state = eCatchableFunctions;
 			else if (std::string(argv[i], crashNumFlag.size()) == crashNumFlag) {
 				std::istringstream(std::string(argv[i]+crashNumFlag.size()))
 					>> m_dangerousFunctionID;
@@ -148,6 +165,9 @@ public:
 int
 main(int argc, char* argv[])
 {
+	SetUnhandledExceptionFilter(UnhandledHandler);
+	_set_invalid_parameter_handler(InvalidParameterHandler);
+
 	const ArgsReader args(argc, argv);
 	const dump::DangerousFunctions functions;
 	switch (args.m_state) {
@@ -169,6 +189,15 @@ main(int argc, char* argv[])
 		std::cout << "Succeeded" << std::endl;
 		break;
 
+	case ArgsReader::eCatchableFunctions:
+		typedef dump::DangerousFunctions::FunctionIT IT;
+		for (IT it = functions.m_functions.begin();
+			it != functions.m_functions.end(); ++it)
+			if (it->IsCatchable())
+				Execute(args.m_runOnThread, *it);
+		std::cout << "Succeeded" << std::endl;
+		break;
+
 	case ArgsReader::eSpecificFunction:
 		if (args.m_dangerousFunctionID < functions.m_functions.size()) {
 			Execute(
@@ -182,32 +211,6 @@ main(int argc, char* argv[])
 		InvalidArguments();
 		break;
 	}
-
-//#ifdef EHA
-//	_set_se_translator(SETranslator);
-//#endif
-//	SetUnhandledExceptionFilter(UnhandledHandler);
-//
-//	//using dump::StructuredException;
-//
-//	try {
-//		dump::GenerateException(/*dump::eBadAlloc*/);
-//	} catch (dump::StructuredException* e) {
-//		std::string description;
-//		e->GetErrorMessage(description);
-//		e->Delete();
-//		std::cerr << __func__
-//			<< ": Caught a dump::StructuredException in main\n" << description
-//			<< '\n';
-//	} catch (const std::exception& e) {
-//		std::cerr << __func__
-//			<< ": Caught a std::exception in main\n" << e.what() << '\n';
-//	} catch (...) { // catch block will only be executed under /EHa
-//		std::cerr << __func__
-//			<< ": Caught a ... exception in main\n";
-//	}
-//
-//	std::cout << "Bye, dump!" << std::endl;
 	return EXIT_SUCCESS;
 }
 

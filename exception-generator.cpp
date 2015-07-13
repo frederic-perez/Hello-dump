@@ -101,9 +101,14 @@ InvalidIteratorAccess()
 
 void
 CppThrow666()
-{	throw 666; }
+{ throw 666; }
 
-#define DANGEROUS_FUNCTION(f) dump::DangerousFunction(#f, f)
+void
+CppThrowStdException()
+{ throw std::exception(); }
+
+#define DANGEROUS_FUNCTION(f) dump::DangerousFunction(#f, f, true)
+#define SUICIDE_FUNCTION(f) dump::DangerousFunction(#f, f, false)
 
 const std::vector<dump::DangerousFunction>&
 GetTheVector()
@@ -114,12 +119,13 @@ GetTheVector()
 		DANGEROUS_FUNCTION(DoubleZeroDiv),
 		DANGEROUS_FUNCTION(InvalidFloatToIntCast),
 		DANGEROUS_FUNCTION(NullPtrAccess),
-		DANGEROUS_FUNCTION(DeletedPtrAccess),
+		SUICIDE_FUNCTION(DeletedPtrAccess),
 		DANGEROUS_FUNCTION(OutOfBoundsStdVectorIndexing),
-		DANGEROUS_FUNCTION(OutOfBoundsOfOldCArrayIndexing),
-		DANGEROUS_FUNCTION(OutOfBoundsDynamicOldCArrayIndexing),
+		SUICIDE_FUNCTION(OutOfBoundsOfOldCArrayIndexing),
+		SUICIDE_FUNCTION(OutOfBoundsDynamicOldCArrayIndexing),
 		DANGEROUS_FUNCTION(InvalidIteratorAccess),
-		DANGEROUS_FUNCTION(CppThrow666)
+		DANGEROUS_FUNCTION(CppThrow666),
+		DANGEROUS_FUNCTION(CppThrowStdException)
 	};
 	
 	static
