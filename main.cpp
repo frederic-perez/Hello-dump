@@ -33,6 +33,11 @@ UnhandledHandler(EXCEPTION_POINTERS* e)
 #endif
 }
 
+void UnhandledExceptionHandler() {
+	std::cout << __func__ << " terminate." << std::endl;
+	exit(EXIT_SUCCESS);
+}
+
 void InvalidParameterHandler (
    const wchar_t * /*expression*/,
    const wchar_t * /*function*/, 
@@ -40,7 +45,8 @@ void InvalidParameterHandler (
    unsigned int /*line*/,
    uintptr_t /*pReserved*/
 ){
-	std::wcout << __func__ << ": CRT catched." << std::endl;
+	std::cout << __func__ << ": CRT catched." << std::endl;
+	exit(EXIT_SUCCESS);
 }
 
 namespace {
@@ -165,7 +171,9 @@ public:
 int
 main(int argc, char* argv[])
 {
-	SetUnhandledExceptionFilter(UnhandledHandler);
+	//set_terminate(UnhandledExceptionHandler);
+	//SetUnhandledExceptionFilter(UnhandledHandler);
+	AddVectoredExceptionHandler(0, UnhandledHandler);
 	_set_invalid_parameter_handler(InvalidParameterHandler);
 
 	const ArgsReader args(argc, argv);
