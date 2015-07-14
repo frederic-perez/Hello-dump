@@ -23,6 +23,7 @@ foreach(func
 	InvalidFloatToIntCast
 	NullPtrAccess
 	DeletedPtrAccess
+	DeleteDeletedPtr
 	OutOfBoundsStdVectorIndexing
 	OutOfBoundsOfOldCArrayIndexing
 	OutOfBoundsDynamicOldCArrayIndexing

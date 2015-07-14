@@ -68,6 +68,14 @@ DeletedPtrAccess()
 }
 
 void
+DeleteDeletedPtr()
+{
+	int* p = new int(666);
+	delete p;
+	delete p;
+}
+
+void
 OutOfBoundsStdVectorIndexing()
 {
 	std::vector<int> v;
@@ -120,6 +128,7 @@ GetTheVector()
 		DANGEROUS_FUNCTION(InvalidFloatToIntCast),
 		DANGEROUS_FUNCTION(NullPtrAccess),
 		SUICIDE_FUNCTION(DeletedPtrAccess),
+		SUICIDE_FUNCTION(DeleteDeletedPtr),
 		DANGEROUS_FUNCTION(OutOfBoundsStdVectorIndexing),
 		SUICIDE_FUNCTION(OutOfBoundsOfOldCArrayIndexing),
 		SUICIDE_FUNCTION(OutOfBoundsDynamicOldCArrayIndexing),
