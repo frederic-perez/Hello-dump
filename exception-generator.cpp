@@ -115,6 +115,15 @@ void
 CppThrowStdException()
 { throw std::exception(); }
 
+void
+CatchedCppThrowStdException() {
+	try { throw std::exception(); }
+	catch(const std::exception&) {
+		std::cout << "Exception catched" << std::endl;
+	}
+}
+
+
 #define DANGEROUS_FUNCTION(f) dump::DangerousFunction(#f, f, true)
 #define SUICIDE_FUNCTION(f) dump::DangerousFunction(#f, f, false)
 
@@ -134,7 +143,8 @@ GetTheVector()
 		SUICIDE_FUNCTION(OutOfBoundsDynamicOldCArrayIndexing),
 		DANGEROUS_FUNCTION(InvalidIteratorAccess),
 		DANGEROUS_FUNCTION(CppThrow666),
-		DANGEROUS_FUNCTION(CppThrowStdException)
+		DANGEROUS_FUNCTION(CppThrowStdException),
+		DANGEROUS_FUNCTION(CatchedCppThrowStdException)
 	};
 	
 	static

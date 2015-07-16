@@ -1,5 +1,6 @@
 // --
 
+#include <csignal>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -31,6 +32,11 @@ UnhandledHandler(EXCEPTION_POINTERS* e)
 		std::cerr << __func__ << ": Error: dump::MakeMinidump failed\n";
 	return EXCEPTION_CONTINUE_SEARCH;
 #endif
+}
+
+void SignalHandler(int signal) {
+	std::cout << __func__ << " signal captured (" << signal << ")." << std::endl;
+	exit(EXIT_SUCCESS);
 }
 
 void UnhandledExceptionHandler() {
@@ -172,8 +178,9 @@ int
 main(int argc, char* argv[])
 {
 	//set_terminate(UnhandledExceptionHandler);
-	//SetUnhandledExceptionFilter(UnhandledHandler);
-	AddVectoredExceptionHandler(0, UnhandledHandler);
+	SetUnhandledExceptionFilter(UnhandledHandler);
+	signal(SIGSEGV, SignalHandler);
+	//AddVectoredExceptionHandler(1, UnhandledHandler);
 	_set_invalid_parameter_handler(InvalidParameterHandler);
 
 	const ArgsReader args(argc, argv);
