@@ -71,6 +71,7 @@ void
 DeleteDeletedPtr()
 {
 	int* p = new int(666);
+	*p = 42; // Silly operation on *p to avoid Cppcheck warning
 	delete p;
 	delete p;
 }
@@ -116,10 +117,11 @@ CppThrowStdException()
 { throw std::exception(); }
 
 void
-CatchedCppThrowStdException() {
-	try { throw std::exception(); }
-	catch(const std::exception&) {
-		std::cout << "Exception catched" << std::endl;
+CaughtCppThrowStdException() {
+	try {
+		throw std::exception();
+	} catch (const std::exception&) {
+		std::cerr << "Exception (std::exception) caught" << std::endl;
 	}
 }
 
@@ -144,7 +146,7 @@ GetTheVector()
 		DANGEROUS_FUNCTION(InvalidIteratorAccess),
 		DANGEROUS_FUNCTION(CppThrow666),
 		DANGEROUS_FUNCTION(CppThrowStdException),
-		DANGEROUS_FUNCTION(CatchedCppThrowStdException)
+		DANGEROUS_FUNCTION(CaughtCppThrowStdException)
 	};
 	
 	static

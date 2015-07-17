@@ -18,8 +18,8 @@
 LONG CALLBACK
 UnhandledHandler(EXCEPTION_POINTERS* e)
 {
-	std::cout << __func__ << ": Exception catched ("
-	<< std::hex << e->ExceptionRecord->ExceptionCode << ')' << std::endl;
+	std::cerr << __func__ << ": Exception caught ("
+		<< std::hex << e->ExceptionRecord->ExceptionCode << ')' << std::endl;
 	exit(EXIT_SUCCESS);
 	//return EXCEPTION_EXECUTE_HANDLER;
 
@@ -44,14 +44,15 @@ void UnhandledExceptionHandler() {
 	exit(EXIT_SUCCESS);
 }
 
-void InvalidParameterHandler (
-   const wchar_t * /*expression*/,
-   const wchar_t * /*function*/, 
-   const wchar_t * /*file*/, 
-   unsigned int /*line*/,
-   uintptr_t /*pReserved*/
-){
-	std::cout << __func__ << ": CRT catched." << std::endl;
+void
+InvalidParameterHandler (
+	 const wchar_t * /*expression*/,
+	 const wchar_t * /*function*/, 
+	 const wchar_t * /*file*/, 
+	 unsigned int /*line*/,
+	 uintptr_t /*pReserved*/)
+{
+	std::cerr << __func__ << ": CRT caught." << std::endl;
 	exit(EXIT_SUCCESS);
 }
 
@@ -154,15 +155,15 @@ public:
 		const std::string threadFlag = "/t";
 
 		for (int i=1; i<argc; ++i) {
-			if (std::string(argv[i]) == allFlag)
+			if (argv[i] == allFlag)
 				m_state = eAllFunctions;
-			else if (std::string(argv[i]) == allFlag)
+			else if (argv[i] == allCatchableFlag)
 				m_state = eCatchableFunctions;
 			else if (std::string(argv[i], crashNumFlag.size()) == crashNumFlag) {
 				std::istringstream(std::string(argv[i]+crashNumFlag.size()))
 					>> m_dangerousFunctionID;
 				m_state = eSpecificFunction;
-			}	else if (std::string(argv[i]) == threadFlag)
+			}	else if (argv[i] == threadFlag)
 				m_runOnThread = true;
 		}
 	}
@@ -197,20 +198,24 @@ main(int argc, char* argv[])
 		break;
 
 	case ArgsReader::eAllFunctions:
-		typedef dump::DangerousFunctions::FunctionIT IT;
-		for (IT it = functions.m_functions.begin();
-				it != functions.m_functions.end(); ++it)
-			Execute(args.m_runOnThread, *it);
-		std::cout << "Succeeded" << std::endl;
+		{
+			typedef dump::DangerousFunctions::FunctionIT IT;
+			for (IT it = functions.m_functions.begin();
+					it != functions.m_functions.end(); ++it)
+				Execute(args.m_runOnThread, *it);
+			std::cout << "Succeeded" << std::endl;
+		}
 		break;
 
 	case ArgsReader::eCatchableFunctions:
-		typedef dump::DangerousFunctions::FunctionIT IT;
-		for (IT it = functions.m_functions.begin();
-			it != functions.m_functions.end(); ++it)
-			if (it->IsCatchable())
-				Execute(args.m_runOnThread, *it);
-		std::cout << "Succeeded" << std::endl;
+		{
+			typedef dump::DangerousFunctions::FunctionIT IT;
+			for (IT it = functions.m_functions.begin();
+				it != functions.m_functions.end(); ++it)
+				if (it->IsCatchable())
+					Execute(args.m_runOnThread, *it);
+			std::cout << "Succeeded" << std::endl; 
+		}
 		break;
 
 	case ArgsReader::eSpecificFunction:
