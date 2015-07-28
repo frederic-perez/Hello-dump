@@ -136,13 +136,14 @@ AskForRunInThread()
 
 void InvalidArguments()
 {
-	std::cout << "Invalid arguments" << std::endl;
+	std::cerr << "Invalid arguments\n";
 }
 
 class ArgsReader
 {
 public:
-	enum State {eAsk, eAllFunctions, eCatchableFunctions, eSpecificFunction, eInvalidArgs};
+	enum State {
+		eAsk, eAllFunctions, eCatchableFunctions, eSpecificFunction, eInvalidArgs};
 
 	ArgsReader(int argc, char* argv[])
 	:	m_state(eAsk),
