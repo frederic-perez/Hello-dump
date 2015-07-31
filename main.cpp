@@ -109,18 +109,18 @@ AskForDangerousFunction(const dump::DangerousFunctions& exceptions)
 {
 	std::cout << "Select a dangerous function:" << std::endl;
 	
-	for (size_t i=0; i < exceptions.m_functions.size(); ++i)
+	for (size_t i=0; i < exceptions.d_functions.size(); ++i)
 		std::cout << "\t[" << i << "] -> " 
-			<< exceptions.m_functions[i].GetName() << std::endl;
+			<< exceptions.d_functions[i].GetName() << std::endl;
 
 	size_t i;
 	do { // Loop to account for silly users
 		std::string line;
 		std::getline(std::cin, line);
 		std::istringstream(line) >> i;
-	} while (i >= exceptions.m_functions.size());
+	} while (i >= exceptions.d_functions.size());
 
-	return exceptions.m_functions[i];
+	return exceptions.d_functions[i];
 }
 
 bool
@@ -201,8 +201,8 @@ main(int argc, char* argv[])
 	case ArgsReader::eAllFunctions:
 		{
 			typedef dump::DangerousFunctions::FunctionIT IT;
-			for (IT it = functions.m_functions.begin();
-					it != functions.m_functions.end(); ++it)
+			for (IT it = functions.d_functions.begin();
+					it != functions.d_functions.end(); ++it)
 				Execute(args.m_runOnThread, *it);
 			std::cout << "Succeeded" << std::endl;
 		}
@@ -211,8 +211,8 @@ main(int argc, char* argv[])
 	case ArgsReader::eCatchableFunctions:
 		{
 			typedef dump::DangerousFunctions::FunctionIT IT;
-			for (IT it = functions.m_functions.begin();
-				it != functions.m_functions.end(); ++it)
+			for (IT it = functions.d_functions.begin();
+				it != functions.d_functions.end(); ++it)
 				if (it->IsCatchable())
 					Execute(args.m_runOnThread, *it);
 			std::cout << "Succeeded" << std::endl; 
@@ -220,9 +220,9 @@ main(int argc, char* argv[])
 		break;
 
 	case ArgsReader::eSpecificFunction:
-		if (args.m_dangerousFunctionID < functions.m_functions.size()) {
+		if (args.m_dangerousFunctionID < functions.d_functions.size()) {
 			Execute(
-				args.m_runOnThread, functions.m_functions[args.m_dangerousFunctionID]);
+				args.m_runOnThread, functions.d_functions[args.m_dangerousFunctionID]);
 			std::cout << "Succeeded" << std::endl;
 		}	else
 			InvalidArguments();

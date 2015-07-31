@@ -159,7 +159,7 @@ GetTheVector()
 } // namespace
 
 dump::DangerousFunctions::DangerousFunctions()
-: m_functions(GetTheVector())
+: d_functions(GetTheVector())
 {}
 
 // -- eof
