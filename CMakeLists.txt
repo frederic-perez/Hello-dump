@@ -2,7 +2,9 @@
 
 cmake_minimum_required(VERSION 2.8)
 
-project(Hello-dump) # TODO: Split as in ABcb
+set(PROJECT_NAME "Hello-dump")
+set(PROJECT_TYPE "CXX")
+project(${PROJECT_NAME} ${PROJECT_TYPE})
 
 set(SRC_LIST
 	aux-raw.h
