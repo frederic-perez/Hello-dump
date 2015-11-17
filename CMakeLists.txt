@@ -31,7 +31,8 @@ foreach(func
 	OutOfBoundsDynamicOldCArrayIndexing
 	InvalidIteratorAccess
 	CppThrow666
-	CppThrowStdException)
+	CppThrowStdException
+	ComputeFactorialOfABigNumber)
 	
 	add_test(Execute${func} ${PROJECT_NAME} /c${i})
 	add_test(Execute${func}_t ${PROJECT_NAME} /c${i} /t)

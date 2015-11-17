@@ -125,6 +125,19 @@ CaughtCppThrowStdException() {
 	}
 }
 
+namespace {
+
+size_t
+FactorialRecursive(const size_t a_n)
+{	return a_n <= 1 ? 1 : a_n * FactorialRecursive(a_n - 1); }
+
+} // namespace
+
+void
+ComputeFactorialOfABigNumber() {
+	const size_t result = FactorialRecursive(22);
+	OUTPUT_VALUE(result);
+}
 
 #define DANGEROUS_FUNCTION(f) dump::DangerousFunction(#f, f, true)
 #define SUICIDE_FUNCTION(f) dump::DangerousFunction(#f, f, false)
@@ -146,7 +159,8 @@ GetTheVector()
 		DANGEROUS_FUNCTION(InvalidIteratorAccess),
 		DANGEROUS_FUNCTION(CppThrow666),
 		DANGEROUS_FUNCTION(CppThrowStdException),
-		DANGEROUS_FUNCTION(CaughtCppThrowStdException)
+		DANGEROUS_FUNCTION(CaughtCppThrowStdException),
+		DANGEROUS_FUNCTION(ComputeFactorialOfABigNumber)
 	};
 	
 	static
