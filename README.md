@@ -1,7 +1,7 @@
 ## Hello-dump
 
 <p align="center">
-  <img src="https://www.dropbox.com/s/mbeqdoy1mcsktzf/Hello-dump--Virus_Blaster--335x200.png?raw=true" alt="Virus Blaster dump from the Wikipedia"/>
+  <img src="images/Hello-dump--Virus_Blaster--335x200.png?raw=true" alt="Virus Blaster dump from the Wikipedia"/>
 </p>
 
 This is a very simple project aiming at identifying what we call "dangerous functions" that potentially raise exceptions. In addition, in the future we can also produce dump files when crashing (to help debugging). These are called "minidumps" in the Microsoft Windows world.
