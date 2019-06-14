@@ -6,25 +6,23 @@
 
 namespace dump {
 
-class StructuredException : public std::exception
-{
+class StructuredException : public std::exception {
 public:
-	StructuredException(unsigned int nSeCode, _EXCEPTION_POINTERS*);
-	StructuredException(StructuredException&);
+  StructuredException(unsigned int nSeCode, _EXCEPTION_POINTERS*);
+  StructuredException(StructuredException&);
 
-	unsigned int GetSeCode() const;
-	_EXCEPTION_POINTERS* GetSePointers() const;
-	void* GetExceptionAddress() const;
+  unsigned int GetSeCode() const;
+  _EXCEPTION_POINTERS* GetSePointers() const;
+  void* GetExceptionAddress() const;
 
-	void Delete();
-	int ReportError(unsigned int nType, unsigned int nIDHelp) const;
+  void Delete();
+  int ReportError(unsigned int nType, unsigned int nIDHelp) const;
 
-	bool
-	GetErrorMessage(std::string& a_description) const;
+  bool GetErrorMessage(std::string& a_description) const;
 
 private:
-	unsigned int m_nSeCode;
-	_EXCEPTION_POINTERS* m_pExcPointers;
+  unsigned int m_nSeCode;
+  _EXCEPTION_POINTERS* m_pExcPointers;
 };
 
 } // namespace dump

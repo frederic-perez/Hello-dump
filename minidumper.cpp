@@ -14,7 +14,7 @@
 bool
 dump::MakeMinidump(EXCEPTION_POINTERS* /*e*/)
 {
-	return false; // TODO
+  return false; // TODO
 }
 
 // -- eof

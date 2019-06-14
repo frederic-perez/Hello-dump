@@ -1,4 +1,4 @@
-// -- 
+// --
 
 #pragma once
 // '- This pragma works for
@@ -10,17 +10,19 @@
 // - Apple OS X Yosemite
 // - Xcode 6.1 with Apple LLVM 6.0 (clang-600.0.54) (based on LLVM 3.5svn)
 
-// Unfortulately __func__ is not understood by vs12. This is a workaround:
+// Unfortunately __func__ is not understood by vs12. This is a workaround:
 #ifndef __func__
-#define __func__ __FUNCTION__
+#  define __func__ __FUNCTION__
 #endif
 
 namespace aux {
 
 template <typename T, size_t N>
 size_t
-ArraySize(const T(&)[N])
-{	return N; }
+ArraySize(const T (&)[N])
+{
+  return N;
+}
 
 } // namespace aux
 
