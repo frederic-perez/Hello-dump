@@ -86,6 +86,10 @@ ExecuteWithinThread(const dump::DangerousFunction& a_function)
   const HANDLE hThread = CreateThread(
     NULL, 0, DangerousFunctionThread, static_cast<LPVOID>(const_cast<dump::DangerousFunction*>(&a_function)), 0, NULL);
 
+  if (hThread == 0) {
+    std::cerr << __func__ << ": CreateThread failed -- returning\n";
+    return;
+  }
   // Do not access same objects than the thread (a_function, cout,...)
   WaitForSingleObject(hThread, INFINITE);
 
