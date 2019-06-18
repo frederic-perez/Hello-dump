@@ -134,15 +134,11 @@ CaughtCppThrowStdException()
   }
 }
 
-namespace {
-
 size_t
 FactorialRecursive(const size_t a_n)
 {
   return a_n <= 1 ? 1 : a_n * FactorialRecursive(a_n - 1);
 }
-
-} // namespace
 
 void
 ComputeFactorialOfABigNumber()
