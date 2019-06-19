@@ -20,12 +20,16 @@ OutputValue(const std::string& a_function, const std::string& a_label, const T& 
 
 #pragma warning(disable : 4723) // Disable potential divide by 0 warning
 
+constexpr int Ten = 10;
+constexpr int Forty_two = 42;
+constexpr int Six_six_six = 666;
+
 template <typename T>
 T
 ZeroDiv()
 {
   T zero = 0;
-  return 666 / zero;
+  return Six_six_six / zero;
 }
 
 void
@@ -57,25 +61,25 @@ InvalidFloatToIntCast()
 void
 NullPtrAccess()
 {
-  int* p = 0;
-  *p = 666;
+  int* p = nullptr;
+  *p = Six_six_six;
   OUTPUT_VALUE(*p);
 }
 
 void
 DeletedPtrAccess()
 {
-  int* p = new int(666);
+  int* p = new int(Six_six_six);
   delete p;
-  *p = 666;
+  *p = Six_six_six;
   OUTPUT_VALUE(*p);
 }
 
 void
 DeleteDeletedPtr()
 {
-  int* p = new int(666);
-  *p = 42; // Silly operation on *p to avoid Cppcheck warning
+  int* p = new int(Six_six_six);
+  *p = Forty_two; // Silly operation on *p to avoid Cppcheck warning
   delete p;
   delete p;
 }
@@ -84,24 +88,24 @@ void
 OutOfBoundsStdVectorIndexing()
 {
   std::vector<int> v;
-  v[0] = 666;
+  v[0] = Six_six_six;
   OUTPUT_VALUE(v[0]);
 }
 
 void
 OutOfBoundsOfOldCArrayIndexing()
 {
-  int v[10] = {0};
-  v[42] = 666;
-  OUTPUT_VALUE(v[42]);
+  int v[Ten] = {0};
+  v[Forty_two] = Six_six_six;
+  OUTPUT_VALUE(v[Forty_two]);
 }
 
 void
 OutOfBoundsDynamicOldCArrayIndexing()
 {
-  int* const v = new int[10];
-  v[10] = 666;
-  OUTPUT_VALUE(v[10]);
+  int* const v = new int[Ten];
+  v[Ten] = Six_six_six;
+  OUTPUT_VALUE(v[Ten]);
   delete[] v;
 }
 
@@ -115,7 +119,7 @@ InvalidIteratorAccess()
 void
 CppThrow666()
 {
-  throw 666;
+  throw Six_six_six;
 }
 
 void

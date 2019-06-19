@@ -19,7 +19,7 @@ public:
 #endif
 
   DangerousFunction(const char* sName, FuncDef func, bool catchable = true)
-  : d_name(sName), d_func(func), d_catchable(catchable)
+  : d_name(sName), d_func(std::move(func)), d_catchable(catchable)
   {}
 
   const std::string& GetName() const { return d_name; }
@@ -34,14 +34,14 @@ private:
 
 class DangerousFunctions { // ie. a container of DangerousFunction objects
 public:
-  typedef std::vector<DangerousFunction> ContainerOfDangerousFunctions;
-  typedef ContainerOfDangerousFunctions::const_iterator FunctionIT;
+  using ContainerOfDangerousFunctions = std::vector<DangerousFunction>;
+  using FunctionIT = ContainerOfDangerousFunctions::const_iterator;
 
   DangerousFunctions();
-  const ContainerOfDangerousFunctions d_functions;
 
-private:
-  DangerousFunctions& operator=(const DangerousFunctions&); // Disable
+  DangerousFunctions& operator=(const DangerousFunctions&) = delete;
+
+  const ContainerOfDangerousFunctions d_functions;
 };
 
 } // namespace dump
