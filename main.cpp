@@ -84,9 +84,14 @@ ExecuteWithinThread(const dump::DangerousFunction& a_function)
   std::cout << "Going to execute dangerous function " << a_function.GetName() << " within a thread" << std::endl;
 
   const HANDLE hThread = CreateThread(
-    NULL, 0, DangerousFunctionThread, static_cast<LPVOID>(const_cast<dump::DangerousFunction*>(&a_function)), 0, NULL);
+    nullptr,
+    0,
+    DangerousFunctionThread,
+    static_cast<LPVOID>(const_cast<dump::DangerousFunction*>(&a_function)),
+    0,
+    nullptr);
 
-  if (hThread == 0) {
+  if (hThread == nullptr) {
     std::cerr << __func__ << ": CreateThread failed -- returning\n";
     return;
   }
@@ -99,10 +104,11 @@ ExecuteWithinThread(const dump::DangerousFunction& a_function)
 void
 Execute(bool a_runInThread, const dump::DangerousFunction& a_function)
 {
-  if (a_runInThread)
+  if (a_runInThread) {
     ExecuteWithinThread(a_function);
-  else
+  } else {
     Execute(a_function);
+  }
 }
 
 const dump::DangerousFunction&
@@ -110,8 +116,9 @@ AskForDangerousFunction(const dump::DangerousFunctions& exceptions)
 {
   std::cout << "Select a dangerous function:" << std::endl;
 
-  for (size_t i = 0; i < exceptions.d_functions.size(); ++i)
+  for (size_t i = 0; i < exceptions.d_functions.size(); ++i) {
     std::cout << "\t[" << i << "] -> " << exceptions.d_functions[i].GetName() << std::endl;
+  }
 
   size_t i;
   do { // Loop to account for silly users
@@ -152,15 +159,16 @@ public:
     const std::string threadFlag = "/t";
 
     for (int i = 1; i < argc; ++i) {
-      if (argv[i] == allFlag)
+      if (argv[i] == allFlag) {
         m_state = eAllFunctions;
-      else if (argv[i] == allCatchableFlag)
+      } else if (argv[i] == allCatchableFlag) {
         m_state = eCatchableFunctions;
-      else if (std::string(argv[i], crashNumFlag.size()) == crashNumFlag) {
+      } else if (std::string(argv[i], crashNumFlag.size()) == crashNumFlag) {
         std::istringstream(std::string(argv[i] + crashNumFlag.size())) >> m_dangerousFunctionID;
         m_state = eSpecificFunction;
-      } else if (argv[i] == threadFlag)
+      } else if (argv[i] == threadFlag) {
         m_runOnThread = true;
+      }
     }
   }
 
@@ -192,17 +200,18 @@ main(int argc, char* argv[])
   } break;
 
   case ArgsReader::eAllFunctions: {
-    typedef dump::DangerousFunctions::FunctionIT IT;
-    for (IT it = functions.d_functions.begin(); it != functions.d_functions.end(); ++it)
-      Execute(args.m_runOnThread, *it);
+    for (const auto& function : functions.d_functions) {
+      Execute(args.m_runOnThread, function);
+    }
     std::cout << "Succeeded" << std::endl;
   } break;
 
   case ArgsReader::eCatchableFunctions: {
-    typedef dump::DangerousFunctions::FunctionIT IT;
-    for (IT it = functions.d_functions.begin(); it != functions.d_functions.end(); ++it)
-      if (it->IsCatchable())
-        Execute(args.m_runOnThread, *it);
+    for (const auto& function : functions.d_functions) {
+      if (function.IsCatchable()) {
+        Execute(args.m_runOnThread, function);
+      }
+    }
     std::cout << "Succeeded" << std::endl;
   } break;
 
@@ -210,8 +219,9 @@ main(int argc, char* argv[])
     if (args.m_dangerousFunctionID < functions.d_functions.size()) {
       Execute(args.m_runOnThread, functions.d_functions[args.m_dangerousFunctionID]);
       std::cout << "Succeeded" << std::endl;
-    } else
+    } else {
       InvalidArguments();
+    }
     break;
 
   default: InvalidArguments(); break;
