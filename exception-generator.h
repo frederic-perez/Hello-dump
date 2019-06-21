@@ -35,7 +35,6 @@ private:
 class DangerousFunctions { // ie. a container of DangerousFunction objects
 public:
   using ContainerOfDangerousFunctions = std::vector<DangerousFunction>;
-  using FunctionIT = ContainerOfDangerousFunctions::const_iterator;
 
   DangerousFunctions();
 
