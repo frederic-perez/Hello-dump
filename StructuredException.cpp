@@ -1,11 +1,7 @@
-// -- Examples on how to use C++11 features, and some other stuff
-
 #include <iostream>
 #include <sstream>
-#include <windows.h> // _EXCEPTION_POINTERS
 
 #include "StructuredException.h"
-#include "aux-raw.h"
 
 dump::StructuredException::StructuredException(unsigned int nSeCode, _EXCEPTION_POINTERS* pExcPointers)
 : m_nSeCode(nSeCode), m_pExcPointers(pExcPointers)

@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <Windows.h> // _EXCEPTION_POINTERS
+
 #include <exception>
 
 namespace dump {
@@ -16,7 +18,7 @@ public:
   void* GetExceptionAddress() const;
 
   void Delete();
-  int ReportError(unsigned int nType, unsigned int nIDHelp) const;
+  int ReportError(unsigned int a_type, unsigned int a_IDHelp) const;
 
   bool GetErrorMessage(std::string& a_description) const;
 
