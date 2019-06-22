@@ -8,8 +8,8 @@ This is a very simple project aiming at identifying what we call "dangerous func
 
 We use to build binaries for these settings:
 - Microsoft Windows 10 Pro: Visual Studio 14 2015 x64
-- Microsoft Windows 8.1: Visual Studio 12 2013 Win64
-- Microsoft Windows 8.1: Visual Studio 2008 32-bit
+- ~~Microsoft Windows 8.1: Visual Studio 12 2013 Win64~~ (discontinued)
+- ~~Microsoft Windows 8.1: Visual Studio 2008 32-bit~~ (discontinued)
 
 Some interesting URLs related to this project:
 - http://stackoverflow.com/questions/5028781/c-how-to-write-a-sample-code-that-will-crash-and-produce-dump-file
