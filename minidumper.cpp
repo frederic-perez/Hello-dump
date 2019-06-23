@@ -1,10 +1,5 @@
 // --
 
-#include <iostream>
-
-#include <Windows.h> // Note: Must be the first one to avoid compiler errors!
-
-#include "aux-raw.h"
 #include "minidumper.h"
 
 // Code available for example at
