@@ -1,5 +1,3 @@
-// --
-
 #pragma once
 // '- This pragma works for
 // - Windows 8.1:
@@ -25,5 +23,3 @@ ArraySize(const T (&)[N])
 }
 
 } // namespace aux
-
-// -- eof
