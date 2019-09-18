@@ -1,5 +1,3 @@
-// --
-
 #include <iostream>
 #include <string>
 
@@ -182,5 +180,3 @@ GetTheVector()
 
 dump::DangerousFunctions::DangerousFunctions() : d_functions(GetTheVector())
 {}
-
-// -- eof

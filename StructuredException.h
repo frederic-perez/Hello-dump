@@ -1,5 +1,3 @@
-// --
-
 #pragma once
 
 #include <Windows.h> // _EXCEPTION_POINTERS
@@ -28,5 +26,3 @@ private:
 };
 
 } // namespace dump
-
-// -- eof

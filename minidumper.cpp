@@ -1,5 +1,3 @@
-// --
-
 #include "minidumper.h"
 
 // Code available for example at
@@ -11,5 +9,3 @@ dump::MakeMinidump(EXCEPTION_POINTERS* /*e*/)
 {
   return false; // TODO
 }
-
-// -- eof

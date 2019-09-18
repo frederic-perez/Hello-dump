@@ -1,5 +1,3 @@
-// --
-
 #include <csignal>
 #include <iostream>
 #include <sstream>
@@ -228,5 +226,3 @@ main(int argc, char* argv[])
   }
   return EXIT_SUCCESS;
 }
-
-// -- eof
