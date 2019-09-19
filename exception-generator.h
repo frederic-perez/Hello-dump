@@ -1,5 +1,3 @@
-// --
-
 #pragma once
 
 #if _MSC_VER >= 1800 // That is, from Visual Studio 2013
@@ -44,5 +42,3 @@ public:
 };
 
 } // namespace dump
-
-// -- eof
