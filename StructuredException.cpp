@@ -101,5 +101,3 @@ dump::StructuredException::GetErrorMessage(std::string& a_description) const
 
   return succeeded;
 }
-
-// -- eof
