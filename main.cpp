@@ -16,7 +16,7 @@
 LONG CALLBACK
 UnhandledHandler(EXCEPTION_POINTERS* e)
 {
-  std::cerr << __func__ << ": Exception caught (" << std::hex << e->ExceptionRecord->ExceptionCode << ')' << std::endl;
+  std::cerr << __func__ << ": Exception caught (" << std::hex << e->ExceptionRecord->ExceptionCode << ")\n";
   exit(EXIT_SUCCESS);
   // return EXCEPTION_EXECUTE_HANDLER;
 
@@ -53,7 +53,7 @@ InvalidParameterHandler(
   unsigned int /*line*/,
   uintptr_t /*pReserved*/)
 {
-  std::cerr << __func__ << ": CRT caught." << std::endl;
+  std::cerr << __func__ << ": CRT caught.\n";
   exit(EXIT_SUCCESS);
 }
 

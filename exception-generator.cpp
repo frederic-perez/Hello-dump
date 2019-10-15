@@ -132,7 +132,7 @@ CaughtCppThrowStdException()
   try {
     throw std::exception();
   } catch (const std::exception&) {
-    std::cerr << "Exception (std::exception) caught" << std::endl;
+    std::cerr << "Exception (std::exception) caught\n";
   }
 }
 
