@@ -16,8 +16,10 @@
 namespace aux {
 
 template <typename T, size_t N>
-size_t
+constexpr
+auto
 ArraySize(const T (&)[N])
+-> size_t
 {
   return N;
 }
