@@ -77,6 +77,6 @@ message(STATUS "CMAKE_CXX_FLAGS are:" ${CMAKE_CXX_FLAGS})
 # Link the executable to the required libraries
 
 target_link_libraries(${PROJECT_NAME}
-  ${Boost_LIBRARIES}
+# ${Boost_LIBRARIES}
 # ${Boost_LIBRARIES} ${OpenIGTLink_LIBRARIES}
 )
