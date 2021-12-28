@@ -47,8 +47,9 @@ if("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
     message(STATUS "Entering Windows/MSVC branch.")
     string(CONCAT CMAKE_CXX_FLAGS
       "${CMAKE_CXX_FLAGS} -D_SCL_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS "
+      "/diagnostics:caret "
       "/permissive- "
-      "/W4 /EHsc /wd4351") # Add /W4 /WX /EHsc
+      "/W4 /WX /EHsc /wd4351") # Add /W4 /WX /EHsc
     # '- http://msdn.microsoft.com/en-US/library/thxezb7y.aspx:
     #    /wd n  Disables the compiler warning that is specified in n.
     #    For example, /wd4326 disables compiler warning C4351.
