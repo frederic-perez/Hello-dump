@@ -1,20 +1,13 @@
 #pragma once
 
-#if _MSC_VER >= 1800 // That is, from Visual Studio 2013
-#  include <functional>
-#endif
-
+#include <functional>
 #include <vector>
 
 namespace dump {
 
 class DangerousFunction {
 public:
-#if _MSC_VER >= 1800 // That is, from Visual Studio 2013
   using FuncDef = std::function<void()>;
-#else
-  typedef void (*FuncDef)();
-#endif
 
   DangerousFunction(const char* sName, FuncDef func, bool catchable = true)
   : d_name(sName), d_func(std::move(func)), d_catchable(catchable)
@@ -25,9 +18,9 @@ public:
   void operator()() const { return d_func(); }
 
 private:
-  std::string d_name;
+  const std::string d_name;
   FuncDef d_func;
-  bool d_catchable;
+  const bool d_catchable;
 };
 
 class DangerousFunctions { // ie. a container of DangerousFunction objects

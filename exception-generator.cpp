@@ -67,7 +67,7 @@ NullPtrAccess()
 void
 DeletedPtrAccess()
 {
-  int* p = new int(Six_six_six);
+  auto p = new int(Six_six_six);
   delete p;
   *p = Six_six_six;
   OUTPUT_VALUE(*p);
@@ -76,7 +76,7 @@ DeletedPtrAccess()
 void
 DeleteDeletedPtr()
 {
-  int* p = new int(Six_six_six);
+  auto p = new int(Six_six_six);
   *p = Forty_two; // Silly operation on *p to avoid Cppcheck warning
   delete p;
   delete p;
@@ -101,7 +101,7 @@ OutOfBoundsOfOldCArrayIndexing()
 void
 OutOfBoundsDynamicOldCArrayIndexing()
 {
-  int* const v = new int[Ten];
+  auto const v = new int[Ten];
   v[Ten] = Six_six_six;
   OUTPUT_VALUE(v[Ten]);
   delete[] v;
@@ -114,12 +114,14 @@ InvalidIteratorAccess()
   OUTPUT_VALUE(*(v.end()));
 }
 
+[[ noreturn ]]
 void
 CppThrow666()
 {
   throw Six_six_six;
 }
 
+[[ noreturn ]]
 void
 CppThrowStdException()
 {
