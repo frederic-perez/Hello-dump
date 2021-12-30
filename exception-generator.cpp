@@ -76,7 +76,7 @@ DeletedPtrAccess()
 void
 DeleteDeletedPtr()
 {
-  auto p = new int(Six_six_six);
+  auto const p = new int(Six_six_six);
   *p = Forty_two; // Silly operation on *p to avoid Cppcheck warning
   delete p;
   delete p;
@@ -139,9 +139,9 @@ CaughtCppThrowStdException()
 }
 
 size_t
-FactorialRecursive(const size_t a_n)
+FactorialRecursive(const size_t n)
 {
-  return a_n <= 1 ? 1 : a_n * FactorialRecursive(a_n - 1);
+  return n <= 1 ? 1 : n * FactorialRecursive(n - 1);
 }
 
 void
@@ -152,33 +152,27 @@ ComputeFactorialOfABigNumber()
 }
 
 #define DANGEROUS_FUNCTION(f) dump::DangerousFunction(#f, f, true)
-#define SUICIDE_FUNCTION(f) dump::DangerousFunction(#f, f, false)
+#define SUICIDAL_FUNCTION(f) dump::DangerousFunction(#f, f, false)
 
-const std::vector<dump::DangerousFunction>&
-GetTheVector()
-{
-  static const dump::DangerousFunction functions[] = {DANGEROUS_FUNCTION(IntZeroDiv),
-                                                      DANGEROUS_FUNCTION(FloatZeroDiv),
-                                                      DANGEROUS_FUNCTION(DoubleZeroDiv),
-                                                      DANGEROUS_FUNCTION(InvalidFloatToIntCast),
-                                                      DANGEROUS_FUNCTION(NullPtrAccess),
-                                                      SUICIDE_FUNCTION(DeletedPtrAccess),
-                                                      SUICIDE_FUNCTION(DeleteDeletedPtr),
-                                                      DANGEROUS_FUNCTION(OutOfBoundsStdVectorIndexing),
-                                                      SUICIDE_FUNCTION(OutOfBoundsOfOldCArrayIndexing),
-                                                      SUICIDE_FUNCTION(OutOfBoundsDynamicOldCArrayIndexing),
-                                                      DANGEROUS_FUNCTION(InvalidIteratorAccess),
-                                                      DANGEROUS_FUNCTION(CppThrow666),
-                                                      DANGEROUS_FUNCTION(CppThrowStdException),
-                                                      DANGEROUS_FUNCTION(CaughtCppThrowStdException),
-                                                      DANGEROUS_FUNCTION(ComputeFactorialOfABigNumber)};
-
-  static const std::vector<dump::DangerousFunction> theVector(&functions[0], &functions[aux::ArraySize(functions)]);
-
-  return theVector;
-}
+const std::vector<dump::DangerousFunction> functions{
+  DANGEROUS_FUNCTION(IntZeroDiv),
+  DANGEROUS_FUNCTION(FloatZeroDiv),
+  DANGEROUS_FUNCTION(DoubleZeroDiv),
+  DANGEROUS_FUNCTION(InvalidFloatToIntCast),
+  DANGEROUS_FUNCTION(NullPtrAccess),
+  SUICIDAL_FUNCTION(DeletedPtrAccess),
+  SUICIDAL_FUNCTION(DeleteDeletedPtr),
+  DANGEROUS_FUNCTION(OutOfBoundsStdVectorIndexing),
+  SUICIDAL_FUNCTION(OutOfBoundsOfOldCArrayIndexing),
+  SUICIDAL_FUNCTION(OutOfBoundsDynamicOldCArrayIndexing),
+  DANGEROUS_FUNCTION(InvalidIteratorAccess),
+  DANGEROUS_FUNCTION(CppThrow666),
+  DANGEROUS_FUNCTION(CppThrowStdException),
+  DANGEROUS_FUNCTION(CaughtCppThrowStdException),
+  DANGEROUS_FUNCTION(ComputeFactorialOfABigNumber)
+};
 
 } // namespace
 
-dump::DangerousFunctions::DangerousFunctions() : d_functions(GetTheVector())
+dump::DangerousFunctions::DangerousFunctions() : d_functions(functions)
 {}

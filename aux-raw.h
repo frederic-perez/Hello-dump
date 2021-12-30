@@ -15,13 +15,4 @@
 
 namespace aux {
 
-template <typename T, size_t N>
-constexpr
-auto
-ArraySize(const T (&)[N])
--> size_t
-{
-  return N;
-}
-
 } // namespace aux
