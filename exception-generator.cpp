@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
 
-#include "aux-raw.h"
-#include "exception-generator.h"
+#include "aux-raw.hpp"
+#include "exception-generator.hpp"
 
 namespace {
 
@@ -16,7 +16,8 @@ OutputValue(const std::string& a_function, const std::string& a_label, const T& 
 
 #define OUTPUT_VALUE(value) OutputValue(__FUNCTION__, #value, value)
 
-#pragma warning(disable : 4723) // Disable potential divide by 0 warning
+#pragma warning(disable : 4723) // Disable warning "potential divide by 0"
+#pragma warning(disable : 4789) // Disable warning "destination of memory copy is too small"
 
 constexpr int Ten = 10;
 constexpr int Forty_two = 42;

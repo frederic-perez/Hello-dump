@@ -1,4 +1,4 @@
-#include "minidumper.h"
+#include "minidumper.hpp"
 
 // Code available for example at
 // http://stackoverflow.com/questions/5028781/

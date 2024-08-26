@@ -3,11 +3,11 @@
 #include <sstream>
 #include <string>
 
-#include "StructuredException.h"
+#include "StructuredException.hpp"
 
-#include "aux-raw.h"
-#include "exception-generator.h"
-#include "minidumper.h"
+#include "aux-raw.hpp"
+#include "exception-generator.hpp"
+#include "minidumper.hpp"
 
 // Code below based on
 // http://stackoverflow.com/questions/5028781/

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "StructuredException.h"
+#include "StructuredException.hpp"
 
 dump::StructuredException::StructuredException(unsigned int nSeCode, _EXCEPTION_POINTERS* pExcPointers)
 : m_nSeCode(nSeCode), m_pExcPointers(pExcPointers)

@@ -7,11 +7,11 @@ project(${PROJECT_NAME} ${PROJECT_TYPE})
 set(CMAKE_VERBOSE_MAKEFILE TRUE)
 
 set(SRC_LIST
-  aux-raw.h
-  exception-generator.cpp exception-generator.h
+  aux-raw.hpp
+  exception-generator.cpp exception-generator.hpp
   main.cpp
-  minidumper.cpp minidumper.h
-  StructuredException.cpp StructuredException.h
+  minidumper.cpp minidumper.hpp
+  StructuredException.cpp StructuredException.hpp
 )
 
 add_executable(${PROJECT_NAME} ${SRC_LIST})
