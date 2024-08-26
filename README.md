@@ -12,7 +12,7 @@ We use to build binaries for these settings:
   - 10 Pro
     - Microsoft Visual Studio Community 2022 v17 (64-bit) » x64
     - Microsoft Visual Studio Community 2019 v16 » x64
-    - Microsoft Visual Studio Community 2017 v15 » x64
+    - ~~Microsoft Visual Studio Community 2017 v15 » x64~~ (discontinued)
     - ~~Microsoft Visual Studio Community 2015 v14 » x64~~ (discontinued)
   - 8.1
     - ~~Microsoft Visual Studio 2013 v12 » Win64~~ (discontinued)
