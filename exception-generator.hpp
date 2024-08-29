@@ -1,4 +1,5 @@
-#pragma once
+#ifndef HELLO_DUMP__EXCEPTION_GENERATOR_HPP
+#define HELLO_DUMP__EXCEPTION_GENERATOR_HPP
 
 #include <functional>
 #include <vector>
@@ -35,3 +36,5 @@ public:
 };
 
 } // namespace dump
+
+#endif // HELLO_DUMP__EXCEPTION_GENERATOR_HPP

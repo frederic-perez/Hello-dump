@@ -1,4 +1,5 @@
-#pragma once
+#ifndef HELLO_DUMP__STRUCTUREDEXCEPTION_HPP
+#define HELLO_DUMP__STRUCTUREDEXCEPTION_HPP
 
 #include <Windows.h> // _EXCEPTION_POINTERS
 
@@ -26,3 +27,5 @@ private:
 };
 
 } // namespace dump
+
+#endif // HELLO_DUMP__STRUCTUREDEXCEPTION_HPP
